@@ -10,6 +10,8 @@ import abiToken from "../../token";
 import abiBinario from "../../unilevel";
 import abiInfinity from "../../infinity-abi";
 
+var chainId = cons.chainId;
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -30,7 +32,11 @@ class App extends Component {
 
   async componentDidMount() {
 
-      if (typeof window.ethereum !== 'undefined') {           
+      if (typeof window.ethereum !== 'undefined') {        
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: chainId}],
+        });       
         var resultado = await window.ethereum.request({ method: 'eth_requestAccounts' });
           //console.log(resultado[0]);
           this.setState({
@@ -47,7 +53,11 @@ class App extends Component {
       }
 
       setInterval(async() => {
-        if (typeof window.ethereum !== 'undefined') {           
+        if (typeof window.ethereum !== 'undefined') {        
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: chainId}],
+          });       
           var resultado = await window.ethereum.request({ method: 'eth_requestAccounts' });
             //console.log(resultado[0]);
             this.setState({
@@ -154,17 +164,6 @@ class App extends Component {
         return(
           <div className="row">
             <Home admin={this.state.admin} contractAddress={cons.SC} version="2" wallet={this.state.binanceM} currentAccount={verWallet}/>
-          </div>
-        );
-      case "old":
-        return(
-          <div className="row">
-            <Home admin={this.state.admin} contractAddress={cons.SC} version="2" wallet={{
-          web3: this.state.binanceM.web3,
-          contractToken: this.state.binanceM.contractToken,
-          contractBinary: this.state.binanceM.contractInfinity,
-          contractInfinity: this.state.binanceM.contractInfinity
-        }}  currentAccount={verWallet}/>
           </div>
         );
       default:
