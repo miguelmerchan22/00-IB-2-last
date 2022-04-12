@@ -163,13 +163,13 @@ class App extends Component {
       case "view":
         return(
           <div className="row">
-            <Home admin={this.state.admin} contractAddress={cons.SC} version="2" wallet={this.state.binanceM} currentAccount={verWallet}/>
+            <Home admin={this.state.admin} contractAddress={cons.INFINITY} version="2" wallet={this.state.binanceM} currentAccount={verWallet}/>
           </div>
         );
       default:
         return(
           <div className="row">
-            <Home admin={this.state.admin} contractAddress={cons.SC} version="2" wallet={this.state.binanceM} currentAccount={this.state.currentAccount}/>
+            <Home admin={this.state.admin} contractAddress={cons.INFINITY} version="2" wallet={this.state.binanceM} currentAccount={this.state.currentAccount}/>
           </div>
         );
     }

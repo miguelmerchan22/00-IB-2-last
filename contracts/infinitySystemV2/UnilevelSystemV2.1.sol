@@ -73,10 +73,12 @@ contract Ownable {
     owner = newOwner;
   }
 }
-contract Proxy {
+contract Proxy is Ownable {
     address public implementation;
-    function setImplementation(address _imp) external {
+    uint256 public upgradeVersion;
+    function setImplementation(address _imp) external onlyOwner {
         implementation = _imp;
+        upgradeVersion++;
     }
     function _delegate(address _imp) internal virtual {
       assembly {
@@ -95,7 +97,7 @@ contract Proxy {
         _delegate(implementation);
     }
 }
-contract Admin is Proxy, Ownable{
+contract Admin is Proxy {
   mapping (address => bool) public admin;
   event NewAdmin(address indexed admin);
   event AdminRemoved(address indexed admin);
@@ -120,10 +122,10 @@ contract Admin is Proxy, Ownable{
 
 contract InfinitySystemV2 is Proxy, Admin{
   using SafeMath for uint256;
-  address token = 0x55d398326f99059fF775485246999027B3197955;
+  address public tokenPricipal = 0x55d398326f99059fF775485246999027B3197955;
 
   OldInfinity_Interface Anterior_Contrato = OldInfinity_Interface(0x47DA06e10CF59f00cCE3Aeb66F9779B5E1dA2b7f);
-  TRC20_Interface USDT_Contract = TRC20_Interface(token);
+  TRC20_Interface USDT_Contract = TRC20_Interface(tokenPricipal);
 
   struct Deposito {
     uint256 inicio;
@@ -149,7 +151,6 @@ contract InfinitySystemV2 is Proxy, Admin{
   uint public version = 2;
   uint256 public MIN_RETIRO = 5 * 10**18;
   uint256 public PRECIO_BLOCK = 50 * 10**18;
-  address public tokenPricipal = token;
   uint256[] public primervez = [50, 30, 20, 10, 10];
   uint256[] public porcientos = [15, 9, 6, 3, 3];
   uint256[] public infinity = [5, 3, 2, 1, 1];
