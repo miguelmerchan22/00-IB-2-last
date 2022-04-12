@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-
 import cons from "../../cons.js";
+const BigNumber = require('bignumber.js');
+
 
 export default class CrowdFunding extends Component {
   constructor(props) {
@@ -439,8 +440,10 @@ export default class CrowdFunding extends Component {
         }
       }
 
+      blokes = new BigNumber(blokes*50).shiftedBy(18).toString();
+
       this.props.wallet.contractBinary.methods
-        .buyBlocks(blokes)
+        .buyBlocks(blokes+"")
         .send({ from: this.state.currentAccount })
         .then(() => {
           window.alert("Felicidades inversión exitosa");

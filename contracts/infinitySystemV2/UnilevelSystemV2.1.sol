@@ -395,6 +395,11 @@ contract InfinitySystemV2 is Proxy{
     if(_value <= 0)revert();
     if(_add){
       investors[_user].invested = investors[_user].invested.add(_value);
+      if (padre[_user] != address(0) ){
+        investors[padre[_user]].blokesDirectos += _value;
+        blockesRango[addressToId[padre[_user]]] += _value;
+        totalInvested += _value;
+      }
     }else{
       investors[_user].invested = investors[_user].invested.sub(_value);
     }
@@ -473,7 +478,13 @@ contract InfinitySystemV2 is Proxy{
       lastUserId++;
       usuario.paidAt = block.timestamp;
       usuario.paidAt2 = block.timestamp;
-      usuario.invested = Anterior_Contrato.withdrawable(_user, false).mul(100).div(240);
+      uint256 _value = Anterior_Contrato.withdrawable(_user, false).mul(100).div(240);
+      usuario.invested = _value;
+      if (padre[_user] != address(0) ){
+        investors[padre[_user]].blokesDirectos += _value;
+        blockesRango[addressToId[padre[_user]]] += _value;
+        totalInvested += _value;
+      }
       _asignarBloke(_user , Anterior_Contrato.withdrawable(_user, false).mul(100).div(240), false);
       if(Anterior_Contrato.withdrawable(_user, true) > 0){
         _asignarBloke(_user , Anterior_Contrato.withdrawable(_user, true).mul(100).div(240), true);
@@ -483,8 +494,7 @@ contract InfinitySystemV2 is Proxy{
     }
   }
   function buyBlocks(uint256 _value) public {
-
-    if(_value <= 0)revert();
+    if(_value < PRECIO_BLOCK)revert();
     Investor storage usuario = investors[msg.sender];
     if (!usuario.registered)revert();
     if (block.timestamp >= usuario.membership )revert();

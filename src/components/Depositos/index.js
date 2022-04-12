@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+const BigNumber = require('bignumber.js');
+
 
 export default class Depositos extends Component {
   constructor(props) {
@@ -147,16 +149,12 @@ export default class Depositos extends Component {
 
     if (verdepositos[0].length > 0) {
       var depositos = await this.props.wallet.contractBinary.methods.depositos(this.state.currentAccount, false).call({from:this.state.currentAccount});
+      console.log(depositos);
       depositos.amount =  depositos[0];
-      delete depositos[0];
       depositos.tiempo =  depositos[1];
-      delete depositos[1];
-      depositos.pasivo =  depositos[2];
-      delete depositos[2];
       depositos.activo =  depositos[3];
-      delete depositos[3];
 
-      //console.log(depositos);
+      console.log(depositos);
 
       listaDepositos = [];
 
@@ -170,37 +168,21 @@ export default class Depositos extends Component {
 
       for (let i = 0; i < depositos.amount.length; i++) {
 
-        if(depositos.tiempo){
-
-        }
-
         var porcentiempo = (((Date.now()-(depositos.tiempo[i]*1000)))*100)/tiempo;
 
-        //console.log(porcentiempo)
+        if(porcentiempo >= 100)porcentiempo = 100;
+        
+        var fecha = new Date((depositos.tiempo[i]*1000)+tiempo)+"";
 
-        if(porcentiempo >= 100){
-          porcentiempo = 100;
-        }
-
-        var fecha = new Date((depositos.tiempo[i]*1000)+tiempo);
-        fecha = ""+fecha;
+        var temp = new BigNumber(depositos.amount[i]).shiftedBy(-18).toNumber();
 
         var proceso;
-        if (depositos.activo[i]  && ((depositos.amount[i]/10**18)*(porcentiempo/100)) < (depositos.amount[i]/10**18)) {
-          if (depositos.pasivo[i]  ) {
+        if (depositos.activo[i]  && (temp*(porcentiempo/100)) < (temp) ){
             proceso = <b> (ACTIVE)</b> 
-          } else {
-            proceso = <b> (ACTIVE)</b> 
-          }
         }else{
-          if (depositos.pasivo[i]  ) {
-            proceso = <b> (FINALIZED)</b> 
-          }else{
-            proceso = <b> (FINALIZED)</b> 
-          }
+          proceso = <b> (FINALIZED)</b> 
         }
         
-
         listaDepositos[depositos.amount.length-i] = (
           <div className="col s12 m12 l12" key={"depsits-"+i}>
             <div id="basic-demo" className="card card-tabs">
@@ -208,7 +190,7 @@ export default class Depositos extends Component {
                     <div className="card-title">
                         <div className="row">
                             <div className="col s12 m6 l10">
-                                <h4 className="card-title"><b>{((depositos.amount[i]/10**18)/porcent)/50}</b> BLKS |  <meter min="0" max="100"
+                                <h4 className="card-title"><b>{((temp)/porcent)/50}</b> BLKS |  <meter min="0" max="100"
          low="25" high="75"
          optimum="100" value={porcentiempo} /> {porcentiempo.toFixed(6)}% | {proceso}</h4>
                             </div>
