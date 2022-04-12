@@ -374,8 +374,8 @@ export default class CrowdFunding extends Component {
       window.alert("Balance approval for exchange: successful");
       return;
     }
-    var blokes = document.getElementById("a").value;
-    var amount = blokes * 50;
+    var blokes = document.getElementById("b").value;
+    var amount = blokes;
     amount = amount - balance;
 
     if (aprovado > 0 && balanceSite >= amount) {
@@ -440,7 +440,7 @@ export default class CrowdFunding extends Component {
         }
       }
 
-      blokes = new BigNumber(blokes*50).shiftedBy(18).toString();
+      blokes = new BigNumber(blokes).shiftedBy(18).toString();
 
       this.props.wallet.contractBinary.methods
         .buyBlocks(blokes+"")
