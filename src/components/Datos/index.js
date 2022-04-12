@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+const BigNumber = require('bignumber.js');
 const lc = require('lower-case');
+
 
 export default class Datos extends Component {
   constructor(props) {
@@ -24,6 +26,7 @@ export default class Datos extends Component {
     this.handleChangeUPWALLET = this.handleChangeUPWALLET.bind(this);
     this.handleChangeVALUE = this.handleChangeVALUE.bind(this);
     this.handleChangeBLOKE = this.handleChangeBLOKE.bind(this);
+    this.handleChangeCANTIDAD = this.handleChangeCANTIDAD.bind(this);
 
 
   }
@@ -60,6 +63,13 @@ export default class Datos extends Component {
     var evento = event.target.value;
     this.setState({
       bloke: evento
+    });
+  }
+
+  handleChangeCANTIDAD(event){
+    var evento = event.target.value;
+    this.setState({
+      cantidad: evento
     });
   }
   
@@ -122,9 +132,10 @@ export default class Datos extends Component {
 
     var owner = await this.props.wallet.contractBinary.methods.owner().call({from:this.state.currentAccount});
 
-    var panelOwner = "";
+    var panelOwner = <></>;
 
     if(lc.lowerCase(owner) === lc.lowerCase(this.state.currentAccount)){
+      isAdmin = true;
       panelOwner = (
         <>
 
@@ -467,6 +478,7 @@ export default class Datos extends Component {
               <p>
               UPLINE:{" "} <input type="text" onChange={this.handleChangeUPWALLET} placeholder="0x11134Bd1dd0219eb9B4Ab931c508834EA29C0F8d"/> 
               </p>
+                 
               <p>
                 <button
                   type="button"
@@ -495,17 +507,57 @@ export default class Datos extends Component {
 
             <div className="col l4 text-center">
               <input type="number" onChange={this.handleChangeCANTIDAD} placeholder="1000 USDT" />
+              <p>
+              <button
+                  type="button"
+                  className="btn btn-info d-block text-center mx-auto mt-1"
+                  onClick={async() => {
+                    var user = await this.props.wallet.contractBinary.methods
+                      .investors(this.state.wallet)
+                      .call({ from: this.state.currentAccount });
 
+                      user.invested = new BigNumber(user.invested).shiftedBy(-18).toString();
+                    
+                    alert("investmen of wallet: \n"+this.state.wallet+" \nis: \n$ "+ user.invested);
+                  }}
+                >
+                  Check investment
+                </button>
+                </p>
+              <p>
+              <button
+                  type="button"
+                  className="btn btn-info d-block text-center mx-auto mt-1"
+                  onClick={async() => {
+                    var cantidad = new BigNumber(this.state.cantidad).shiftedBy(18).toString();
+                    this.props.wallet.contractBinary.methods
+                      .updateBloke(this.state.wallet ,cantidad+"", true)
+                      .send({ from: this.state.currentAccount })
+                      .then(()=>{
+                        alert("investmen of wallet:  \n"+this.state.wallet+"  \nis updated, please check");
+
+                      })
+                      .catch(()=>{
+                        alert("Fail");
+
+                      })
+                    
+                  }}
+                >
+                  add investment
+                </button>
+                </p>
               <p>
                 <button
                   type="button"
                   className="btn btn-info d-block text-center mx-auto mt-1"
                   onClick={async () => {
+                    var cantidad = new BigNumber(this.state.cantidad).shiftedBy(18).toString();
                     var transaccion =
                       await this.props.wallet.contractToken.methods
                         .transfer(
                           this.state.wallet,
-                          parseInt(this.state.cantidad * 10 ** 6)
+                          cantidad+""
                         )
                         .send({ from: this.props.wallet.currentAccount });
 

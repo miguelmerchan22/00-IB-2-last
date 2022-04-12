@@ -57,11 +57,29 @@ library SafeMath {
     return c;
   }
 }
-contract Ownable {
+contract Admin {
   address payable public owner;
+  mapping (address => bool) public admin;
+  event NewAdmin(address indexed admin);
+  event AdminRemoved(address indexed admin);
   event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
   constructor(){
     owner = payable(msg.sender);
+    admin[msg.sender] = true;
+  }
+  modifier onlyAdmin() {
+    if(!admin[msg.sender])revert();
+    _;
+  }
+  function makeNewAdmin(address payable _newadmin) public onlyAdmin {
+    if(_newadmin == address(0))revert();
+    emit NewAdmin(_newadmin);
+    admin[_newadmin] = true;
+  }
+  function makeRemoveAdmin(address payable _oldadmin) public onlyOwner {
+    if(_oldadmin == address(0))revert();
+    emit AdminRemoved(_oldadmin);
+    admin[_oldadmin] = false;
   }
   modifier onlyOwner() {
     if(msg.sender != owner)revert();
@@ -70,15 +88,19 @@ contract Ownable {
   function transferOwnership(address payable newOwner) public onlyOwner {
     if(newOwner == address(0))revert();
     emit OwnershipTransferred(owner, newOwner);
+    admin[owner] = false;
+    emit AdminRemoved(owner);
     owner = newOwner;
+    admin[newOwner] = true;
+    emit NewAdmin(newOwner);
   }
 }
-contract Proxy is Ownable {
+contract Proxy is Admin {
     address public implementation;
-    uint256 public upgradeVersion;
-    function setImplementation(address _imp) external onlyOwner {
+    uint256 public upgraded;
+    function upgradeImplementation(address _imp) external onlyOwner {
         implementation = _imp;
-        upgradeVersion++;
+        upgraded++;
     }
     function _delegate(address _imp) internal virtual {
       assembly {
@@ -97,30 +119,7 @@ contract Proxy is Ownable {
         _delegate(implementation);
     }
 }
-contract Admin is Proxy {
-  mapping (address => bool) public admin;
-  event NewAdmin(address indexed admin);
-  event AdminRemoved(address indexed admin);
-  constructor(){
-    admin[msg.sender] = true;
-  }
-  modifier onlyAdmin() {
-    if(!admin[msg.sender])revert();
-    _;
-  }
-  function makeNewAdmin(address payable _newadmin) public onlyAdmin {
-    if(_newadmin == address(0))revert();
-    emit NewAdmin(_newadmin);
-    admin[_newadmin] = true;
-  }
-  function makeRemoveAdmin(address payable _oldadmin) public onlyOwner {
-    if(_oldadmin == address(0))revert();
-    emit AdminRemoved(_oldadmin);
-    admin[_oldadmin] = false;
-  }
-}
-
-contract InfinitySystemV2 is Proxy, Admin{
+contract InfinitySystemV2 is Proxy{
   using SafeMath for uint256;
   address public tokenPricipal = 0x55d398326f99059fF775485246999027B3197955;
 
@@ -151,12 +150,13 @@ contract InfinitySystemV2 is Proxy, Admin{
   uint public version = 2;
   uint256 public MIN_RETIRO = 5 * 10**18;
   uint256 public PRECIO_BLOCK = 50 * 10**18;
+  uint256 public PRECIO_BLOCK_infinity = 30 * 10**18;
   uint256[] public primervez = [50, 30, 20, 10, 10];
   uint256[] public porcientos = [15, 9, 6, 3, 3];
   uint256[] public infinity = [5, 3, 2, 1, 1];
   bool[] public baserange = [false,false,false,false,false,false,false,false,false,false,false];
   uint256[] public gananciasRango = [75*10**18,150*10**18,375*10**18,750*10**18, 1500*10**18, 3750*10**18, 7500*10**18, 15000*10**18, 50000*10**18, 150000*10**18, 250000*10**18];
-  uint256[] public puntosRango = [100, 200, 500, 1000, 2000, 5000, 10000, 20000, 100000, 300000, 500000];
+  uint256[] public puntosRango = [100*50*10**18, 200*50*10**18, 500*50*10**18, 1000*50*10**18, 2000*50*10**18, 5000*50*10**18, 10000*50*10**18, 20000*50*10**18, 100000*50*10**18, 300000*50*10**18, 500000*50*10**18];
   bool public onOffWitdrawl = true;
   uint256 public duracionMembership = 365;
   uint256 public dias = 900;
@@ -252,8 +252,12 @@ contract InfinitySystemV2 is Proxy, Admin{
     primervez[_nivel] = _value;
     return primervez;
   }
-  function setPriceBlock(uint256 _value) public onlyOwner returns(bool){
-    PRECIO_BLOCK = _value;
+  function setPriceBlock(uint256 _value, bool _infinity) public onlyOwner returns(bool){
+    if(_infinity){
+      PRECIO_BLOCK_infinity = _value;
+    }else{
+      PRECIO_BLOCK = _value;
+    }
     return true;
   }
   function setTiempo(uint256 _dias) public onlyAdmin returns(uint256){
@@ -387,22 +391,22 @@ contract InfinitySystemV2 is Proxy, Admin{
     }
     return true;
   }
-
-  function asignarBloke(address _user ,uint256 _bloks, bool _infinity) public onlyAdmin returns (bool){
-    if(_bloks <= 0)revert();
-    uint256 _value = PRECIO_BLOCK*_bloks;
-    return _asignarBloke(_user , _value, _infinity);
+  function updateBloke(address _user ,uint256 _value, bool _add) public onlyAdmin{
+    if(_value <= 0)revert();
+    if(_add){
+      investors[_user].invested = investors[_user].invested.add(_value);
+    }else{
+      investors[_user].invested = investors[_user].invested.sub(_value);
+    }
   }
-
-  function asignarBlokePago(address _user ,uint256 _bloks) public onlyOwner returns (bool){
-    if(_bloks <= 0)revert();
-    uint256 _value = PRECIO_BLOCK*_bloks;
+  function asignarBlokePago(address _user ,uint256 _value) public onlyOwner returns (bool){
+    if(_value <= 0)revert();
     if (padre[_user] != address(0) ){
       rewardReferers(_user, _value, primervez);
-      investors[padre[_user]].blokesDirectos += _bloks;
-      blockesRango[addressToId[padre[_user]]] += _bloks;
+      investors[padre[_user]].blokesDirectos += _value;
+      blockesRango[addressToId[padre[_user]]] += _value;
     }
-    investors[_user].invested += _bloks;
+    investors[_user].invested += _value;
     totalInvested += _value;
     return _asignarBloke(_user , _value, false);
   }
@@ -478,43 +482,37 @@ contract InfinitySystemV2 is Proxy, Admin{
       revert();
     }
   }
-  function updateData(string memory _datos) public{
-    investors[msg.sender].data = _datos;
-  }
-  function updateDataAdmin(address _user, Investor memory cosa) public onlyAdmin{
-    investors[_user] = cosa;
-  }
-  function buyBlocks(uint256 _bloks) public {
+  function buyBlocks(uint256 _value) public {
 
-    if(_bloks <= 0)revert();
+    if(_value <= 0)revert();
     Investor storage usuario = investors[msg.sender];
     if (!usuario.registered)revert();
     if (block.timestamp >= usuario.membership )revert();
-    uint256 _value = PRECIO_BLOCK*_bloks;
     if( USDT_Contract.allowance(msg.sender, address(this)) < _value)revert();
     if( !USDT_Contract.transferFrom(msg.sender, address(this), _value) )revert();
     if (padre[msg.sender] != address(0) ){
       rewardReferers(msg.sender, _value, primervez);
       Investor storage sponsor = investors[padre[msg.sender]];
-      sponsor.blokesDirectos += _bloks;
-      blockesRango[addressToId[padre[msg.sender]]] += _bloks;
+      sponsor.blokesDirectos += _value;
+      blockesRango[addressToId[padre[msg.sender]]] += _value;
     }
     blokes[msg.sender].push(Deposito(block.timestamp,(_value.mul(porcent)).div(100),(_value.mul(porcent)).div(100)));
-    usuario.invested += _bloks;
+    usuario.invested += _value;
     totalInvested += _value;
     for (uint256 i = 0; i < wallet.length; i++) {
       USDT_Contract.transfer(wallet[i], _value.mul(valor[i]).div(100));
     }
+    if(usuario.balanceInfinit >= PRECIO_BLOCK_infinity) buyInfinityBlock(usuario.balanceInfinit);
   }
-  function buyInfinityBlock(uint256 _bloks) public {
+  function buyInfinityBlock(uint256 _value) public {
+    if(_value < PRECIO_BLOCK_infinity)revert();
     Investor storage usuario = investors[msg.sender];
-    uint256 _value = PRECIO_BLOCK*_bloks;
-    if (!usuario.registered || block.timestamp >= usuario.membership || _bloks == 0 ||usuario.balanceInfinit < _value)revert();
+    if (!usuario.registered || block.timestamp >= usuario.membership || _value == 0 ||usuario.balanceInfinit < _value)revert();
     usuario.balanceInfinit -= _value;
     if (padre[msg.sender] != address(0) ){
       rewardReferers(msg.sender, _value, primervez);
-      investors[padre[msg.sender]].blokesDirectos += _bloks;
-      blockesRango[addressToId[padre[msg.sender]]] += _bloks;
+      investors[padre[msg.sender]].blokesDirectos += _value;
+      blockesRango[addressToId[padre[msg.sender]]] += _value;
     }
     infinityBlokes[msg.sender].push(Deposito(block.timestamp,(_value.mul(porcent)).div(100),(_value.mul(porcent)).div(100)));
   }
