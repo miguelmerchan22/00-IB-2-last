@@ -576,7 +576,19 @@ export default class CrowdFunding extends Component {
                 <div className="row">
                   <div className="col s12 m12 center-align">
                   <input type="checkbox" />
-                    <b>Balance infinity: $ {this.state.balanceInfinito} <br />
+                    <b><button className="btn btn-succes" onClick={()=>{
+                      if(this.state.balanceInfinito >= 30){
+                      var valor = new BigNumber(this.state.balanceInfinito).shiftedBy(18).toString();
+                      this.props.wallet.contractBinary.methods
+                      .buyInfinityBlock(valor+"")
+                      .send({ from: this.state.currentAccount })
+                      .then(() => {
+                        window.alert("Block infinity buyed");
+                      });
+                    }else{
+                      alert("to activate the infinite block you must have $30 in infinite balance")
+                    }
+                    }}>Active Block Infinity $ {this.state.balanceInfinito}</button> <br /><br />
                       Balance USDT: $ {this.state.balanceUSDT}
                     </b>
                   </div>
