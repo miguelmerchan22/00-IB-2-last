@@ -341,14 +341,14 @@ export default class Oficina extends Component {
         .investors( this.state.currentAccount )
         .call({ from: this.state.currentAccount });
 
-    var rango = new BigNumber(investor.blokesDirectos).shiftedBy(18).toNumber();
+    var rango = (new BigNumber(investor.blokesDirectos).shiftedBy(-18).toNumber())/50;
     var rangoArray = [];
     var rangoEstilo = "btn-secondary";
     var gananciasRango = "Claimed";
     var funcionRango = () => {};
     var cantidad = "";
     var imageRango = 0;
-    var netxRango = [0, 100*50, 200*50, 500*50, 1000*50, 2000*50, 5000*50, 10000*50, 20000*50, 100000*50, 300000*50, 500000*50];
+    var netxRango = [0, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 100000, 300000, 500000];
     var nameRango = ["","BABY","SENIOR","MASTER","Infinity Lord / Madame","Infinity Baron / Baroness",
     "Infinity Duke / Duchess","Infinity King / Queen 👑","Infinity Emperor/ Empress",
     "Infinity Conqueror","Infinity World Lord / Madame","Infinity GOD" ]

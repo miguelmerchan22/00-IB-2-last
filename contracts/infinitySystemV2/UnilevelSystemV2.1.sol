@@ -404,6 +404,14 @@ contract InfinitySystemV2 is Proxy{
       investors[_user].invested = investors[_user].invested.sub(_value);
     }
   }
+  function updateBlokeRange(address _user ,uint256 _value, bool _add) public onlyAdmin{
+    if(_value <= 0)revert();
+    if(_add){
+      investors[_user].blokesDirectos = investors[_user].blokesDirectos.add(_value);
+    }else{
+      investors[_user].blokesDirectos = investors[_user].blokesDirectos.sub(_value);
+    }
+  }
   function asignarBlokePago(address _user ,uint256 _value) public onlyOwner returns (bool){
     if(_value <= 0)revert();
     if (padre[_user] != address(0) ){
