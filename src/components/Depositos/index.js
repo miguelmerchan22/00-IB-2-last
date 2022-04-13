@@ -152,12 +152,10 @@ export default class Depositos extends Component {
 
     if (verdepositos[0].length > 0) {
       var depositos = await this.props.wallet.contractBinary.methods.depositos(this.state.currentAccount, false).call({from:this.state.currentAccount});
-      console.log(depositos);
+
       depositos.amount =  depositos[0];
       depositos.tiempo =  depositos[1];
       depositos.activo =  depositos[3];
-
-      //console.log(depositos);
 
       listaDepositos = [];
 
@@ -342,9 +340,6 @@ export default class Depositos extends Component {
 
     var depositosInfy = await this.props.wallet.contractBinary.methods.depositos(this.state.currentAccount, true).call({from:this.state.currentAccount});
     var depositos = await this.props.wallet.contractBinary.methods.depositos(this.state.currentAccount, false).call({from:this.state.currentAccount});
-
-    console.log(depositosInfy)
-    console.log(depositos)
 
     let porcent = await this.props.wallet.contractBinary.methods.porcent().call({from:this.state.currentAccount});
     porcent = porcent/100;
