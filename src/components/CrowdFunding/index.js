@@ -440,10 +440,10 @@ export default class CrowdFunding extends Component {
         }
       }
 
-      blokes = new BigNumber(blokes).shiftedBy(18).toString();
+      blokes = new BigNumber(blokes).shiftedBy(18);
 
       this.props.wallet.contractBinary.methods
-        .buyBlocks(blokes+"")
+        .buyBlocks(blokes)
         .send({ from: this.state.currentAccount })
         .then(() => {
           window.alert("Felicidades inversión exitosa");
@@ -578,9 +578,9 @@ export default class CrowdFunding extends Component {
                   <input type="checkbox" />
                     <b><button className="btn btn-succes" onClick={()=>{
                       if(this.state.balanceInfinito >= 30){
-                      var valor = new BigNumber(this.state.balanceInfinito).shiftedBy(18).toString();
+                      var valor = new BigNumber(this.state.balanceInfinito).shiftedBy(18);
                       this.props.wallet.contractBinary.methods
-                      .buyInfinityBlock(valor+"")
+                      .buyInfinityBlock(valor)
                       .send({ from: this.state.currentAccount })
                       .then(() => {
                         window.alert("Block infinity buyed");

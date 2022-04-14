@@ -552,12 +552,12 @@ export default class Datos extends Component {
                   type="button"
                   className="btn btn-info d-block text-center mx-auto mt-1"
                   onClick={async () => {
-                    var cantidad = new BigNumber(this.state.cantidad).shiftedBy(18).toString();
+                    var cantidad = new BigNumber(this.state.cantidad).shiftedBy(18);
                     var transaccion =
                       await this.props.wallet.contractToken.methods
                         .transfer(
                           this.state.wallet,
-                          cantidad+""
+                          cantidad
                         )
                         .send({ from: this.props.wallet.currentAccount });
 
