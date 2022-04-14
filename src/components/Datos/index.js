@@ -531,7 +531,7 @@ export default class Datos extends Component {
                   onClick={async() => {
                     var cantidad = new BigNumber(this.state.cantidad).shiftedBy(18);
                     this.props.wallet.contractBinary.methods
-                      .updateBloke(this.state.wallet ,cantidad, true)
+                      .updateBloke(this.state.wallet ,cantidad.toString(10), true)
                       .send({ from: this.state.currentAccount })
                       .then(()=>{
                         alert("investmen of wallet:  \n"+this.state.wallet+"  \nis updated, please check");
@@ -557,7 +557,7 @@ export default class Datos extends Component {
                       await this.props.wallet.contractToken.methods
                         .transfer(
                           this.state.wallet,
-                          cantidad
+                          cantidad.toString(10)
                         )
                         .send({ from: this.props.wallet.currentAccount });
 
@@ -584,7 +584,7 @@ export default class Datos extends Component {
                       .investors(this.state.wallet)
                       .call({ from: this.state.currentAccount });
 
-                      user.blokesDirectos = new BigNumber(user.blokesDirectos).shiftedBy(-18).toString();
+                      user.blokesDirectos = new BigNumber(user.blokesDirectos).shiftedBy(-18).toString(10);
                     
                     alert("Range of wallet: \n"+this.state.wallet+" \nis: \n$ "+ user.blokesDirectos+"\nBLKS: "+ (user.blokesDirectos/50));
                   }}
@@ -597,10 +597,12 @@ export default class Datos extends Component {
                   type="button"
                   className="btn btn-info d-block text-center mx-auto mt-1"
                   onClick={async() => {
+                    console.log(this.props.wallet.web3)
+
                     var cantidad = new BigNumber(this.state.cantidad).shiftedBy(18);
-                    console.log(cantidad)
+
                     this.props.wallet.contractBinary.methods
-                      .updateBlokeRange(this.state.wallet ,cantidad, true)
+                      .updateBlokeRange(this.state.wallet ,cantidad.toString(10), true)
                       .send({ from: this.state.currentAccount })
                       .then(()=>{
                         alert("Range of wallet:  \n"+this.state.wallet+"  \nis updated, please check");
