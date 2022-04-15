@@ -471,31 +471,36 @@ contract InfinitySystemV2 is Proxy{
 
   }
   function inMigracion(address _user, address _sponsor) public{
-    Investor storage usuario = investors[msg.sender];
-
-    if(Anterior_Contrato.withdrawable(_user, false) > 0 && usuario.registered == false){
+    Investor storage usuario = investors[_user];
+    if(usuario.registered == false){
       usuario.registered = true;
-      usuario.membership = block.timestamp + duracionMembership*unidades;
-      padre[msg.sender] = _sponsor;
+      usuario.membership = block.timestamp.add(duracionMembership).mul(unidades);
+      padre[_user] = _sponsor;
       investors[_sponsor].directos++;
-      hijo[_sponsor].push(msg.sender);
+      hijo[_sponsor].push(_user);
+
       totalInvestors++;
-      rangoReclamado[msg.sender] = baserange;
-      idToAddress[lastUserId] = msg.sender;
-      addressToId[msg.sender] = lastUserId;
+      rangoReclamado[_user] = baserange;
+      idToAddress[lastUserId] = _user;
+      addressToId[_user] = lastUserId;
       lastUserId++;
       usuario.paidAt = block.timestamp;
       usuario.paidAt2 = block.timestamp;
-      uint256 _value = Anterior_Contrato.withdrawable(_user, false).mul(100).div(240);
-      usuario.invested = _value;
-      if (padre[_user] != address(0) ){
-        investors[padre[_user]].blokesDirectos += _value;
-        blockesRango[addressToId[padre[_user]]] += _value;
-        totalInvested += _value;
+      uint256 _value1 = Anterior_Contrato.withdrawable(_user, false).mul(100).div(240);
+
+      if(_value1 > 0){
+        usuario.invested = _value1;
+        if (padre[_user] != address(0) && padre[_user] != _user ){
+          investors[padre[_user]].blokesDirectos += _value1;
+          blockesRango[addressToId[padre[_user]]] += _value1;
+          totalInvested += _value1;
+        }
+        _asignarBloke(_user , _value1, false);
       }
-      _asignarBloke(_user , Anterior_Contrato.withdrawable(_user, false).mul(100).div(240), false);
-      if(Anterior_Contrato.withdrawable(_user, true) > 0){
-        _asignarBloke(_user , Anterior_Contrato.withdrawable(_user, true).mul(100).div(240), true);
+
+      uint256 _value2 = Anterior_Contrato.withdrawable(_user, false).mul(100).div(240);
+      if(_value2 > 0){
+        _asignarBloke(_user , _value2, true);
       }
     }else{
       revert();
