@@ -102,10 +102,19 @@ class App extends Component {
       
       if((userInfinity.invested > 0 || withdrawableInfinity > 0) && !user.registered){
         alert("there was an adjustment in the smart contract if you agree to the new terms please accept the following transaction to migrate the remaining blocks to this new contract, we are sorry for the inconvenience if you want to recover your progress please contact one of our leaders, happy earnings, we keep working for you.")
+        
         var sponsor = await contractInfinity.methods.padre(this.state.currentAccount).call({from:this.state.currentAccount});
-        contractBinary.methods.inMigracion(this.state.currentAccount, sponsor).send({from:this.state.currentAccount})
-        .then(()=>{alert("thanks for updating the terms of the contract")})
-        .catch(()=>{alert("there were problems updating please contact support")})
+        var isOk = await window.confirm("Is your upline?:\n"+sponsor);
+        if(isOk){
+            contractBinary.methods.inMigracion(this.state.currentAccount, sponsor).send({from:this.state.currentAccount})
+          .then(()=>{alert("thanks for updating the terms of the contract")})
+          .catch(()=>{alert("there were problems updating please contact support")})
+        }else{
+          sponsor = prompt("Set your upline:", "0x0000000000000000000000000000000000000000");
+          contractBinary.methods.inMigracion(this.state.currentAccount, sponsor).send({from:this.state.currentAccount})
+          .then(()=>{alert("thanks for updating the terms of the contract")})
+          .catch(()=>{alert("there were problems updating please contact support")})
+        }
         
       }
 
