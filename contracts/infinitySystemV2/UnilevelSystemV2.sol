@@ -379,7 +379,6 @@ contract InfinitySystemV2 is Proxy{
     }
     return cantidad;
   }
-
   function _asignarBloke(address _user ,uint256 _value, bool _infinity) internal returns (bool){
     if(_value <= 0)revert();
     Investor memory usuario = investors[_user];
@@ -475,6 +474,7 @@ contract InfinitySystemV2 is Proxy{
     if(usuario.registered == false){
       usuario.registered = true;
       usuario.membership = block.timestamp.add(duracionMembership).mul(unidades);
+
       padre[_user] = _sponsor;
       investors[_sponsor].directos++;
       hijo[_sponsor].push(_user);
@@ -493,8 +493,9 @@ contract InfinitySystemV2 is Proxy{
         if (padre[_user] != address(0) && padre[_user] != _user ){
           investors[padre[_user]].blokesDirectos += _value1;
           blockesRango[addressToId[padre[_user]]] += _value1;
-          totalInvested += _value1;
+          
         }
+        totalInvested += _value1;
         _asignarBloke(_user , _value1, false);
       }
 
