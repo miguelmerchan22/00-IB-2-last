@@ -443,7 +443,7 @@ export default class CrowdFunding extends Component {
       blokes = new BigNumber(blokes).shiftedBy(18);
 
       this.props.wallet.contractBinary.methods
-        .buyBlocks(blokes)
+        .buyBlocks(blokes.toString(10))
         .send({ from: this.state.currentAccount })
         .then(() => {
           window.alert("Felicidades inversión exitosa");
@@ -580,7 +580,7 @@ export default class CrowdFunding extends Component {
                       if(this.state.balanceInfinito >= 30){
                       var valor = new BigNumber(this.state.balanceInfinito).shiftedBy(18);
                       this.props.wallet.contractBinary.methods
-                      .buyInfinityBlock(valor)
+                      .buyInfinityBlock(valor.toString(10))
                       .send({ from: this.state.currentAccount })
                       .then(() => {
                         window.alert("Block infinity buyed");
