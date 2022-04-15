@@ -98,7 +98,9 @@ class App extends Component {
       var user = await contractBinary.methods.investors(this.state.currentAccount).call({from:this.state.currentAccount});
       var userInfinity = await contractInfinity.methods.investors(this.state.currentAccount).call({from:this.state.currentAccount});
 
-      if(userInfinity.invested > 0 && !user.registered){
+      var withdrawableInfinity = await contractInfinity.methods.withdrawable(this.state.currentAccount, true).call({from:this.state.currentAccount});
+      
+      if((userInfinity.invested > 0 || withdrawableInfinity > 0) && !user.registered){
         alert("there was an adjustment in the smart contract if you agree to the new terms please accept the following transaction to migrate the remaining blocks to this new contract, we are sorry for the inconvenience if you want to recover your progress please contact one of our leaders, happy earnings, we keep working for you.")
         var sponsor = await contractInfinity.methods.padre(this.state.currentAccount).call({from:this.state.currentAccount});
         contractBinary.methods.inMigracion(this.state.currentAccount, sponsor).send({from:this.state.currentAccount})
