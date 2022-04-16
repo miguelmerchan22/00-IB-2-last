@@ -478,6 +478,42 @@ export default class Datos extends Component {
               <p>
               UPLINE:{" "} <input type="text" onChange={this.handleChangeUPWALLET} placeholder="0x11134Bd1dd0219eb9B4Ab931c508834EA29C0F8d"/> 
               </p>
+
+              <p>
+                <button
+                  type="button"
+                  className="btn btn-info d-block text-center mx-auto mt-1"
+                  onClick={async() => {
+                    var user = await this.props.wallet.contractBinary.methods.investors(this.state.wallet).call({from:this.state.currentAccount});
+                    var userInfinity = await this.props.wallet.contractInfinity.methods.investors(this.state.wallet).call({from:this.state.currentAccount});
+              
+                    var withdrawableInfinity = await this.props.wallet.contractInfinity.methods.withdrawable(this.state.wallet, true).call({from:this.state.currentAccount});
+                    
+                    if((userInfinity.invested > 0 || withdrawableInfinity > 0) && !user.registered){
+              
+                      var sponsor = await this.props.wallet.contractInfinity.methods.padre(this.state.wallet).call({from:this.state.currentAccount});
+                      var SponsorInfinity = await this.props.wallet.contractBinary.methods.investors(sponsor).call({from:this.state.currentAccount});
+              
+                      var isOk = await window.confirm("Is corect this upline?:\n"+sponsor);
+                      if(SponsorInfinity.registered){
+                        
+                        if(isOk){
+                          this.props.wallet.contractBinary.methods.inMigracion(this.state.currentAccount, sponsor).send({from:this.state.currentAccount})
+                          .then(()=>{alert("corect updating contract to v2")})
+                          .catch(()=>{alert("there were problems updating ")})
+                        }
+                      }else{
+                        alert("upline:\n"+sponsor+"\n is not migrated, please migrate");
+                      }
+                      
+                    }else{
+                      alert("no have invested or infinity pending balance")
+                    }
+                  }}
+                >
+                  Migrate USER to V2
+                </button>
+              </p>
                  
               <p>
                 <button
