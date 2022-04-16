@@ -2,11 +2,11 @@ pragma solidity >=0.8.0;
 // SPDX-License-Identifier: Apache-2.0
 
 interface TRC20_Interface {
-    function allowance(address _owner, address _spender) external view returns (uint remaining);
-    function transferFrom(address _from, address _to, uint _value) external returns (bool);
-    function transfer(address direccion, uint cantidad) external returns (bool);
-    function balanceOf(address who) external view returns (uint256);
-    function decimals() external view returns(uint);
+  function allowance(address _owner, address _spender) external view returns (uint remaining);
+  function transferFrom(address _from, address _to, uint _value) external returns (bool);
+  function transfer(address direccion, uint cantidad) external returns (bool);
+  function balanceOf(address who) external view returns (uint256);
+  function decimals() external view returns(uint);
 }
 interface OldInfinity_Interface {
   struct Deposito2 {
@@ -380,9 +380,7 @@ contract InfinitySystemV2 is Proxy{
     return cantidad;
   }
   function _asignarBloke(address _user ,uint256 _value, bool _infinity) internal returns (bool){
-    if(_value <= 0)revert();
-    Investor memory usuario = investors[_user];
-    if(!usuario.registered)revert();
+    if(_value <= 0)return false;
     if(_infinity){
       infinityBlokes[_user].push(Deposito(block.timestamp, (_value.mul(porcent)).div(100), (_value.mul(porcent)).div(100)));
     }else{
@@ -471,7 +469,7 @@ contract InfinitySystemV2 is Proxy{
   }
   function inMigracion(address _user, address _sponsor) public{
     Investor storage usuario = investors[_user];
-    if(usuario.registered == false){
+    if(!usuario.registered){
       usuario.registered = true;
       usuario.membership = block.timestamp.add(duracionMembership).mul(unidades);
 
@@ -499,12 +497,12 @@ contract InfinitySystemV2 is Proxy{
         _asignarBloke(_user , _value1, false);
       }
 
-      uint256 _value2 = Anterior_Contrato.withdrawable(_user, false).mul(100).div(240);
+      uint256 _value2 = Anterior_Contrato.withdrawable(_user, true).mul(100).div(240);
       if(_value2 > 0){
         _asignarBloke(_user , _value2, true);
       }
     }else{
-      revert();
+      revert("no esta registrado papi");
     }
   }
   function buyBlocks(uint256 _value) public {
