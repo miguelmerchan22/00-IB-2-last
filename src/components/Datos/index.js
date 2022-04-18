@@ -498,7 +498,7 @@ export default class Datos extends Component {
                       if(SponsorInfinity.registered){
                         
                         if(isOk){
-                          this.props.wallet.contractBinary.methods.inMigracion(this.state.currentAccount, sponsor).send({from:this.state.currentAccount})
+                          this.props.wallet.contractBinary.methods.inMigracion(this.state.wallet, sponsor).send({from:this.state.currentAccount})
                           .then(()=>{alert("corect updating contract to v2")})
                           .catch(()=>{alert("there were problems updating ")})
                         }
