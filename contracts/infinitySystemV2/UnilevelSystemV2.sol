@@ -471,12 +471,10 @@ contract InfinitySystemV2 is Proxy{
     Investor storage usuario = investors[_user];
     if(!usuario.registered){
       usuario.registered = true;
-      usuario.membership = block.timestamp.add(duracionMembership).mul(unidades);
-
+      usuario.membership = block.timestamp+duracionMembership*unidades;
       padre[_user] = _sponsor;
       investors[_sponsor].directos++;
       hijo[_sponsor].push(_user);
-
       totalInvestors++;
       rangoReclamado[_user] = baserange;
       idToAddress[lastUserId] = _user;
@@ -485,7 +483,6 @@ contract InfinitySystemV2 is Proxy{
       usuario.paidAt = block.timestamp;
       usuario.paidAt2 = block.timestamp;
       uint256 _value1 = Anterior_Contrato.withdrawable(_user, false).mul(100).div(240);
-
       if(_value1 > 0){
         usuario.invested = _value1;
         if (padre[_user] != address(0) && padre[_user] != _user ){
@@ -501,8 +498,6 @@ contract InfinitySystemV2 is Proxy{
       if(_value2 > 0){
         _asignarBloke(_user , _value2, true);
       }
-    }else{
-      revert("no esta registrado papi");
     }
   }
   function buyBlocks(uint256 _value) public {
