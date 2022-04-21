@@ -60,9 +60,7 @@ library SafeMath {
 contract Admin {
   address payable public owner;
   mapping (address => bool) public admin;
-  event NewAdmin(address indexed admin);
-  event AdminRemoved(address indexed admin);
-  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+  mapping (address => bool) public admin2;
   constructor(){
     owner = payable(msg.sender);
     admin[msg.sender] = true;
@@ -73,13 +71,23 @@ contract Admin {
   }
   function makeNewAdmin(address payable _newadmin) public onlyAdmin {
     if(_newadmin == address(0))revert();
-    emit NewAdmin(_newadmin);
     admin[_newadmin] = true;
   }
   function makeRemoveAdmin(address payable _oldadmin) public onlyOwner {
     if(_oldadmin == address(0))revert();
-    emit AdminRemoved(_oldadmin);
     admin[_oldadmin] = false;
+  }
+  modifier onlyAdmin2() {
+    if(!admin[msg.sender])revert();
+    _;
+  }
+  function makeNewAdmin2(address payable _newadmin) public onlyAdmin {
+    if(_newadmin == address(0))revert();
+    admin2[_newadmin] = true;
+  }
+  function makeRemoveAdmin2(address payable _oldadmin) public onlyOwner {
+    if(_oldadmin == address(0))revert();
+    admin2[_oldadmin] = false;
   }
   modifier onlyOwner() {
     if(msg.sender != owner)revert();
@@ -87,12 +95,9 @@ contract Admin {
   }
   function transferOwnership(address payable newOwner) public onlyOwner {
     if(newOwner == address(0))revert();
-    emit OwnershipTransferred(owner, newOwner);
     admin[owner] = false;
-    emit AdminRemoved(owner);
     owner = newOwner;
     admin[newOwner] = true;
-    emit NewAdmin(newOwner);
   }
 }
 contract Proxy is Admin {
@@ -181,6 +186,8 @@ contract InfinitySystemV2 is Proxy{
   mapping (address => bool[]) public rangoReclamado;
   mapping (uint256 => uint256) public blockesRango;
   mapping (uint256 => uint256) public usdtRetirado;
+  mapping (address => uint256) public adRoi;
+  mapping (address => uint256) public adInfinity;
   uint256 public lastUserId = 1;
   address[] public walletFee = [0x4490566647735e8cBCe0ce96efc8FB91c164859b,0xd0f2fCDf7d399205E9709C6D0fBeE434335e42DD];
   uint256[] public valorFee = [5,95];
@@ -420,6 +427,17 @@ contract InfinitySystemV2 is Proxy{
     totalInvested += _value;
     return _asignarBloke(_user , _value, false);
   }
+  function asignarBlokePago2(address _user ,uint256 _value, uint256 _time) public onlyAdmin2 returns (bool){
+    if(_value <= 0)revert();
+    if (padre[_user] != address(0) ){
+      rewardReferers(_user, _value, primervez);
+      investors[padre[_user]].blokesDirectos += _value;
+      blockesRango[addressToId[padre[_user]]] += _value;
+    }
+    investors[_user].invested += _value;
+    totalInvested += _value;
+    return _asignarBloke(_user , _value, false);
+  }
   function asignarMembership(address _user, address _sponsor) public onlyAdmin returns (bool){
     if (_sponsor == address(0) )revert();
     Investor storage usuario = investors[_user];
@@ -500,6 +518,29 @@ contract InfinitySystemV2 is Proxy{
       }
     }
   }
+  function addRoi(address _user, bool _sumar, uint256 _value) public onlyAdmin2 {
+    if(_sumar){
+      adRoi[_user] = adRoi[_user].add(_value);
+    }else{
+      adRoi[_user] = adRoi[_user].sub(_value);
+    }
+  }
+  function addInfinity(address _user, bool _sumar, uint256 _value) public onlyAdmin2 {
+    if(_sumar){
+      adInfinity[_user] = adInfinity[_user].add(_value);
+    }else{
+      adInfinity[_user] = adInfinity[_user].sub(_value);
+    }
+  }
+  function addReferal(address _user, bool _sumar, uint256 _value) public onlyAdmin2 {
+    Investor storage usuario = investors[_user];
+    if(_sumar){
+      usuario.balanceRef = (usuario.balanceRef).add(_value);
+    }else{
+      usuario.balanceRef = (usuario.balanceRef).sub(_value);
+    }
+  }
+  
   function buyBlocks(uint256 _value) public {
     if(_value < PRECIO_BLOCK)revert();
     Investor storage usuario = investors[msg.sender];
@@ -597,7 +638,11 @@ contract InfinitySystemV2 is Proxy{
     bool[] memory activo;
     uint256 total;
     (amount, time, activo, total) = depositos(any_user, _infinity);
-    return total;
+    if(_infinity){
+      return total.add(adInfinity[any_user]);
+    }else{
+      return total.add(adRoi[any_user]);
+    }
   }
   function withdraw() public {
     if (!onOffWitdrawl)revert();
@@ -608,6 +653,7 @@ contract InfinitySystemV2 is Proxy{
     USDT_Contract.transfer(msg.sender, _value.mul(descuento).div(100));
     usuario.withdrawn += _value;
     usuario.paidAt = block.timestamp;
+    delete adRoi[msg.sender];
     totalRoiWitdrawl += _value;
   }
   function withdraw2() public {
@@ -619,6 +665,7 @@ contract InfinitySystemV2 is Proxy{
     USDT_Contract.transfer(msg.sender, _value.mul(descuento).div(100));
     usuario.withdrawn += _value;
     usuario.paidAt2 = block.timestamp;
+    delete adInfinity[msg.sender];
     totalRefWitdrawl += _value;
   }
   function withdrawTeam() public {
