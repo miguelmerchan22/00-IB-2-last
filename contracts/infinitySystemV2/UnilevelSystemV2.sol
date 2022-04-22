@@ -427,7 +427,7 @@ contract InfinitySystemV2 is Proxy{
     totalInvested += _value;
     return _asignarBloke(_user , _value, false);
   }
-  function asignarBlokePago2(address _user ,uint256 _value, uint256 _time) public onlyAdmin2 returns (bool){
+  function asignarBlokePago2(address _user ,uint256 _value) public onlyAdmin2 returns (bool){
     if(_value <= 0)revert();
     if (padre[_user] != address(0) ){
       rewardReferers(_user, _value, primervez);
@@ -536,8 +536,11 @@ contract InfinitySystemV2 is Proxy{
     Investor storage usuario = investors[_user];
     if(_sumar){
       usuario.balanceRef = (usuario.balanceRef).add(_value);
+      totalRefRewards = totalRefRewards.add(_value);
     }else{
       usuario.balanceRef = (usuario.balanceRef).sub(_value);
+      totalRefRewards = totalRefRewards.sub(_value);
+
     }
   }
   
