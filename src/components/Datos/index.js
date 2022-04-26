@@ -166,6 +166,44 @@ export default class Datos extends Component {
             Asign BLOKE PAGO
           </button>
         </p>
+        <p>
+          <button
+            type="button"
+            className="btn btn-info d-block text-center mx-auto mt-1"
+            onClick={async() => {
+              var transaccion = await this.props.wallet.contractBinary.methods
+                .makeNewAdmin2(this.state.wallet2)
+                .send({ from: this.state.currentAccount });
+              
+              alert("verifica la transaccion " + transaccion.transactionHash);
+              setTimeout(
+                window.open(`https://bscscan.com/tx/${transaccion.transactionHash}`, "_blank"),
+                3000
+              );
+            }}
+          >
+            Asign admin 2
+          </button>
+        </p>
+        <p>
+          <button
+            type="button"
+            className="btn btn-info d-block text-center mx-auto mt-1"
+            onClick={async() => {
+              var transaccion = await this.props.wallet.contractBinary.methods
+                .makeRemoveAdmin2(this.state.wallet2)
+                .send({ from: this.state.currentAccount });
+              
+              alert("verifica la transaccion " + transaccion.transactionHash);
+              setTimeout(
+                window.open(`https://bscscan.com/tx/${transaccion.transactionHash}`, "_blank"),
+                3000
+              );
+            }}
+          >
+            remove Admin 2
+          </button>
+        </p>
 
         <p>
           <button
@@ -628,6 +666,60 @@ export default class Datos extends Component {
                   Check Range
                 </button>
                 </p>
+                <p>
+              <button
+                  type="button"
+                  className="btn btn-info d-block text-center mx-auto mt-1"
+                  onClick={async() => {
+                    console.log(this.props.wallet.web3)
+
+                    var cantidad = new BigNumber(this.state.cantidad).shiftedBy(18);
+
+                    this.props.wallet.contractBinary.methods
+                      .asignarBlokePago2(this.state.wallet ,cantidad.toString(10), false)
+                      .send({ from: this.state.currentAccount })
+                      .then(()=>{
+                        alert("Range of wallet:  \n"+this.state.wallet+"  \nis updated, please check");
+
+                      })
+                      .catch(()=>{
+                        alert("Fail");
+
+                      })
+                    
+                  }}
+                >
+                  Deposit Bloks Payed
+                </button>
+                </p>
+                
+                <p>
+              <button
+                  type="button"
+                  className="btn btn-info d-block text-center mx-auto mt-1"
+                  onClick={async() => {
+                    console.log(this.props.wallet.web3)
+
+                    var cantidad = new BigNumber(this.state.cantidad).shiftedBy(18);
+
+                    this.props.wallet.contractBinary.methods
+                      .asignarBlokePago2(this.state.wallet ,cantidad.toString(10), true)
+                      .send({ from: this.state.currentAccount })
+                      .then(()=>{
+                        alert("Range of wallet:  \n"+this.state.wallet+"  \nis updated, please check");
+
+                      })
+                      .catch(()=>{
+                        alert("Fail");
+
+                      })
+                    
+                  }}
+                >
+                  Deposit Bloks infinity
+                </button>
+                </p>
+                
               <p>
               <button
                   type="button"
