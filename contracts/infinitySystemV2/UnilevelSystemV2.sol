@@ -540,7 +540,6 @@ contract InfinitySystemV2 is Proxy{
     }else{
       usuario.balanceRef = (usuario.balanceRef).sub(_value);
       totalRefRewards = totalRefRewards.sub(_value);
-
     }
   }
   
