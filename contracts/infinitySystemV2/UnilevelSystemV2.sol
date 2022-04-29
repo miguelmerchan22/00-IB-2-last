@@ -389,7 +389,7 @@ contract InfinitySystemV2 is Proxy{
   function _asignarBloke(address _user ,uint256 _value, bool _infinity) internal returns (bool){
     if(_value <= 0)return false;
     if(_infinity){
-      infinityBlokes[_user].push(Deposito(block.timestamp, (_value.mul(porcent)).div(100), (_value.mul(porcent)).div(100)));
+      infinityBlokes[_user].push(Deposito(block.timestamp, _value, _value));
     }else{
       blokes[_user].push(Deposito(block.timestamp, (_value.mul(porcent)).div(100), (_value.mul(porcent)).div(100)));
     }
