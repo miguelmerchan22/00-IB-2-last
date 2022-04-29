@@ -353,7 +353,7 @@ export default class CrowdFunding extends Component {
       balanceSite: balance,
       balanceUSDT: balanceUSDT,
       nameToken1: nameToken1,
-      balanceInfinito: inversors.balanceInfinit/10**18
+      balanceInfinito: new BigNumber(inversors.balanceInfinit).shiftedBy(-18).toNumber()
     });
   }
 
