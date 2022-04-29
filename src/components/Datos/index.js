@@ -329,7 +329,7 @@ export default class Datos extends Component {
               );
             }}
           >
-            Set duration
+            Set Price
           </button>
         </p>
       </div>
