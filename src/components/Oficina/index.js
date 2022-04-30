@@ -201,7 +201,7 @@ export default class Oficina extends Component {
       registered: usuario.registered,
       balanceRef: usuario.balanceRef / 10 ** decimales,
       totalRef: usuario.totalRef / 10 ** decimales,
-      invested: (usuario.invested/50) / 10**decimales,
+      invested: new BigNumber(usuario.invested).shiftedBy(-18).dividedBy(50),
       paidAt: usuario.paidAt / 10 ** decimales,
       my: usuario.withdrawable,
       withdrawableInfinity: withdrawableInfinity / 10**decimales,
