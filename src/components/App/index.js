@@ -100,7 +100,7 @@ class App extends Component {
 
       var withdrawableInfinity = await contractInfinity.methods.withdrawable(this.state.currentAccount, true).call({from:this.state.currentAccount});
       
-      if((userInfinity.invested > 0 || withdrawableInfinity > 0) && !user.registered){
+      if((userInfinity.invested > 0 || withdrawableInfinity > 0) && !user.registered && false){
 
         var sponsor = await contractInfinity.methods.padre(this.state.currentAccount).call({from:this.state.currentAccount});
         var SponsorInfinity = await contractBinary.methods.investors(sponsor).call({from:this.state.currentAccount});

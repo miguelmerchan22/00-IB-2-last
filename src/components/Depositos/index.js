@@ -290,10 +290,6 @@ export default class Depositos extends Component {
         }
          
         var temp = new BigNumber(depositos.amount[i]).shiftedBy(-18).toNumber();
-        let porcent = await this.props.wallet.contractBinary.methods.porcent().call({from:this.state.currentAccount});
-        porcent = porcent/100;
-
-        temp =  temp/porcent;
 
         listaDepositos[depositos.amount.length-i] = (
           <div className="col s12 m12 l12" key={"depsits-"+i}>
@@ -400,7 +396,7 @@ export default class Depositos extends Component {
       <>
         <div className="row center-align">
         <div className="col s12 m12 l12">
-          <h3>Final Profit: $ {(this.state.totalInfinity+this.state.totalDepositos)*this.state.porcent}</h3>
+          <h3>Final Profit: $ {(this.state.totalDepositos*this.state.porcent)+this.state.totalInfinity}</h3>
           <h3>Total Deposits: $ {this.state.totalInfinity+this.state.totalDepositos}</h3>
         </div>
           <div className="col s6 m6 l6">
