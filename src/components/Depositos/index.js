@@ -288,7 +288,7 @@ export default class Depositos extends Component {
         if (depositos.activo[i]  && porcentiempo <= 100) {
           proceso = <b> (ACTIVE)</b> 
         }
-        
+         
         var temp = new BigNumber(depositos.amount[i]).shiftedBy(-18).toNumber();
         let porcent = await this.props.wallet.contractBinary.methods.porcent().call({from:this.state.currentAccount});
         porcent = porcent/100;

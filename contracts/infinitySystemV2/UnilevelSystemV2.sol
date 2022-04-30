@@ -574,7 +574,7 @@ contract InfinitySystemV2 is Proxy{
       investors[padre[msg.sender]].blokesDirectos += _value;
       blockesRango[addressToId[padre[msg.sender]]] += _value;
     }
-    infinityBlokes[msg.sender].push(Deposito(block.timestamp,(_value.mul(porcent)).div(100),(_value.mul(porcent)).div(100)));
+    infinityBlokes[msg.sender].push(Deposito(block.timestamp,_value,_value));
   }
   function withdrawableRange(address any_user) public view returns (uint256 amount) {
     Investor memory user = investors[any_user];
