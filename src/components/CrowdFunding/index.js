@@ -170,12 +170,12 @@ export default class CrowdFunding extends Component {
         .investors( niveles[index][sub])
         .call({ from: this.state.currentAccount });
 
-        var blokes = (parseInt(investor.invested)/50)/10**18;
+        var blokes = new BigNumber(investor.invested).shiftedBy(-18);
 
-        datos[index].blks  += blokes;
-        datos[index].pasive  += blokes*50;
-        datos[index].refer  += blokes*50*porcentajes[index];
-        datos[index].infinity  += blokes*50*porcentajes2[index];
+        datos[index].blks  += blokes.dividedBy(50).toNumber(10);
+        datos[index].pasive  += blokes.toNumber(10);
+        datos[index].refer  += blokes.multipliedBy(porcentajes[index]).toNumber(10);
+        datos[index].infinity  += blokes.multipliedBy(porcentajes2[index]).toNumber(10);
 
       }
 
