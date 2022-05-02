@@ -10,7 +10,7 @@ var chainId = '0x38';
 
 if(true){// testnet comand
     SC = "0x031f115150c6F8178f19C031B5b1a1d82c8d238A";// direccion del contrato V1
-    INFINITY = "0xc3339f614f075ECf364cfE30b1E8d7e6bcaC867d"; // version 2  0xf47fBd34E663D8F5ad78fbf46Ae097202557A8e8
+    INFINITY = "0x18A66cc03820Ea7e86775681a4F62413b81eCB7C"; // version 2  0xf47fBd34E663D8F5ad78fbf46Ae097202557A8e8
 
     TOKEN = "0xd5881b890b443be0c609BDFAdE3D8cE886cF9BAc";
     chainId = '0x61';
