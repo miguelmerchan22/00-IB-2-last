@@ -351,7 +351,7 @@ export default class Depositos extends Component {
 
     }
     for (let index = 0; index < depositosInfy[0].length; index++) {
-      totalInfinity += (new BigNumber(depositosInfy[0][index]).shiftedBy(-18).toNumber())/porcent;
+      totalInfinity += new BigNumber(depositosInfy[0][index]).shiftedBy(-18).toNumber();
 
     }
 
