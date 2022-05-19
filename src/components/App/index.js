@@ -64,6 +64,34 @@ class App extends Component {
               metamask: true,
               conectado: true
             })
+
+            try {         
+              var web3 = new Web3(window.web3.currentProvider);// mainet... metamask
+              var contractToken = new web3.eth.Contract(
+                abiToken,
+                cons.TOKEN
+              );
+              var contractBinary = new web3.eth.Contract(
+                abiInfinity,
+                cons.INFINITY
+        
+              );
+        
+              var isAdmin = await contractBinary.methods.admin(this.state.currentAccount).call({from:this.state.currentAccount});
+        
+                this.setState({
+                  binanceM:{
+                    web3: web3,
+                    contractToken: contractToken,
+                    contractBinary: contractBinary
+                  },
+                  admin: isAdmin,
+                })
+        
+              //web3 = new Web3(new Web3.providers.HttpProvider("https://data-seed-prebsc-1-s1.binance.org:8545/"));
+            } catch (error) {
+                alert(error);
+            } 
   
         } else {          
           this.setState({
@@ -75,33 +103,7 @@ class App extends Component {
       },7*1000);
 
 
-    try {         
-      var web3 = new Web3(window.web3.currentProvider);// mainet... metamask
-      var contractToken = new web3.eth.Contract(
-        abiToken,
-        cons.TOKEN
-      );
-      var contractBinary = new web3.eth.Contract(
-        abiInfinity,
-        cons.INFINITY
-
-      );
-
-      var isAdmin = await contractBinary.methods.admin(this.state.currentAccount).call({from:this.state.currentAccount});
-
-        this.setState({
-          binanceM:{
-            web3: web3,
-            contractToken: contractToken,
-            contractBinary: contractBinary
-          },
-          admin: isAdmin,
-        })
-
-      //web3 = new Web3(new Web3.providers.HttpProvider("https://data-seed-prebsc-1-s1.binance.org:8545/"));
-    } catch (error) {
-        alert(error);
-    }  
+     
 
   }
 
