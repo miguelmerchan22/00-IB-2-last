@@ -101,9 +101,9 @@ export default class Datos extends Component {
     .totalRefRewards()
     .call({ from: this.state.currentAccount });
 
-    var totalRank = await this.props.wallet.contractBinary.methods
-    .totalRange()
-    .call({ from: this.state.currentAccount });
+    var totalRank = 0;//await this.props.wallet.contractBinary.methods
+    //.totalRange()
+    //.call({ from: this.state.currentAccount });
 
     var totalRoiWitdrawl = await this.props.wallet.contractBinary.methods
       .totalRoiWitdrawl()
