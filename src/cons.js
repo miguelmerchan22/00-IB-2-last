@@ -2,7 +2,7 @@ const proxy = "https://proxy-sites.herokuapp.com/";
 
 const WS = "0x0000000000000000000000000000000000000000";//0x0000000000000000000000000000000000000000 recibe los huerfanos por defecto
 
-var INFINITY = "0xFb0c7715d96227C70e86101F3dCF990bA5813E48"; // version 2
+var INFINITY = "0xcA6e1ea3d145368e41E2Af23A0240e21249fbA3B"; // version 2
 
 var TOKEN = "0x55d398326f99059fF775485246999027B3197955";
 var chainId = '0x38';

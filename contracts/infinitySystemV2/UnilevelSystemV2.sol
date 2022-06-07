@@ -378,7 +378,6 @@ contract InfinitySystemV2 is Proxy{
     }
     return cantidad;
   }
-
   function totalRangeWitdrawl() public view returns (uint256){
     uint256 cantidad;
     for (uint256 a = 0; a < lastUserId; a++) {
