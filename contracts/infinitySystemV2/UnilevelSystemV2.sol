@@ -8,30 +8,6 @@ interface TRC20_Interface {
   function balanceOf(address who) external view returns (uint256);
   function decimals() external view returns(uint);
 }
-interface OldInfinity_Interface {
-  struct Deposito2 {
-    uint256 inicio;
-    uint256 value;
-    uint256 amount;
-    bool infinity;
-  }
-  struct Investor2 {
-    bool registered;
-    uint256 membership;
-    uint256 balanceRef;
-    uint256 totalRef;
-    uint256 invested;
-    uint256 paidAt;
-    uint256 paidAt2;
-    uint256 withdrawn;
-    uint256 directos;
-    string data;
-    Deposito2[] depositos;
-    uint256 blokesDirectos;
-  }
-    function investors(address) external view returns(Investor2 memory);
-    function withdrawable(address any_user, bool _infinity) external view returns (uint256);
-}
 library SafeMath {
   function mul(uint a, uint b) internal pure returns (uint) {
     if (a == 0) {
@@ -100,35 +76,10 @@ contract Admin {
     admin[newOwner] = true;
   }
 }
-contract Proxy is Admin {
-    address public implementation;
-    uint256 public upgraded;
-    function upgradeImplementation(address _imp) external onlyOwner {
-        implementation = _imp;
-        upgraded++;
-    }
-    function _delegate(address _imp) internal virtual {
-      assembly {
-        calldatacopy(0, 0, calldatasize())
-        let result := delegatecall(gas(), _imp, 0, calldatasize(), 0, 0)
-        returndatacopy(0, 0, returndatasize())
-        switch result
-        case 0 {revert(0, returndatasize())}
-        default {return(0, returndatasize())}
-      }
-    }
-    fallback() external payable {
-        _delegate(implementation);
-    }
-    receive() external payable {
-        _delegate(implementation);
-    }
-}
-contract InfinitySystemV2 is Proxy{
+contract InfinitySystemV2 is Admin {
   using SafeMath for uint256;
   address public tokenPricipal = 0x55d398326f99059fF775485246999027B3197955;
 
-  OldInfinity_Interface Anterior_Contrato = OldInfinity_Interface(0x47DA06e10CF59f00cCE3Aeb66F9779B5E1dA2b7f);
   TRC20_Interface USDT_Contract = TRC20_Interface(tokenPricipal);
 
   struct Deposito {
@@ -152,7 +103,6 @@ contract InfinitySystemV2 is Proxy{
     uint256 blokesDirectos;
   }
 
-  uint public version = 2;
   uint256 public MIN_RETIRO = 5 * 10**18;
   uint256 public PRECIO_BLOCK = 50 * 10**18;
   uint256 public PRECIO_BLOCK_infinity = 30 * 10**18;
@@ -282,10 +232,6 @@ contract InfinitySystemV2 is Proxy{
   function setRetorno(uint256 _porcentaje) public onlyAdmin returns(uint256){
     porcent = _porcentaje;
     return (porcent);
-  }
-  function setContratoMigracion(address _contarct) public onlyOwner returns(bool){
-    Anterior_Contrato = OldInfinity_Interface(_contarct);
-    return true;
   }
   function column(address yo, uint256 _largo) public view returns(address[ ] memory) {
     address[] memory res;
@@ -484,39 +430,6 @@ contract InfinitySystemV2 is Proxy{
     usuario.data = _datos;
 
   }
-  function inMigracion(address _user, address _sponsor) public{
-    Investor storage usuario = investors[_user];
-    if(!usuario.registered){
-      usuario.registered = true;
-      usuario.membership = block.timestamp+duracionMembership*unidades;
-      padre[_user] = _sponsor;
-      investors[_sponsor].directos++;
-      hijo[_sponsor].push(_user);
-      totalInvestors++;
-      rangoReclamado[_user] = baserange;
-      idToAddress[lastUserId] = _user;
-      addressToId[_user] = lastUserId;
-      lastUserId++;
-      usuario.paidAt = block.timestamp;
-      usuario.paidAt2 = block.timestamp;
-      uint256 _value1 = Anterior_Contrato.withdrawable(_user, false).mul(100).div(240);
-      if(_value1 > 0){
-        usuario.invested = _value1;
-        if (padre[_user] != address(0) && padre[_user] != _user ){
-          investors[padre[_user]].blokesDirectos += _value1;
-          blockesRango[addressToId[padre[_user]]] += _value1;
-          
-        }
-        totalInvested += _value1;
-        _asignarBloke(_user , _value1, false);
-      }
-
-      uint256 _value2 = Anterior_Contrato.withdrawable(_user, true).mul(100).div(240);
-      if(_value2 > 0){
-        _asignarBloke(_user , _value2, true);
-      }
-    }
-  }
   function addRoi(address _user, bool _sumar, uint256 _value) public onlyAdmin2 {
     if(_sumar){
       adRoi[_user] = adRoi[_user].add(_value);
@@ -616,23 +529,7 @@ contract InfinitySystemV2 is Proxy{
     }
     return newA;
   }
-  function allnetwork( address[] memory network ) public view returns ( address[] memory) {
-    Investor storage user;
-    for (uint i = 0; i < network.length; i++) {
-      user = investors[network[i]];
-      address userLeft = address(0);
-      for (uint u = 0; u < network.length; u++) {
-        if (userLeft == network[u]){
-          userLeft = address(0);
-        }
-      }
-      if( userLeft != address(0) ){
-        network = actualizarNetwork(network);
-        network[network.length-1] = userLeft;
-      }
-    }
-    return network;
-  }
+
   function withdrawable(address any_user, bool _infinity) public view returns (uint256) {
     uint256[] memory amount;
     uint256[] memory time;
