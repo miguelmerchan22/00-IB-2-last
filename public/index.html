@@ -10,6 +10,7 @@
         <title>Dashboard | Infinity Blocks</title>
         <link rel="apple-touch-icon" href="app-assets/images/favicon/apple-touch-icon-152x152.png" />
         <link rel="shortcut icon" type="image/x-icon" href="app-assets/images/favicon/favicon-32x32.png" />
+
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
         <!-- BEGIN: VENDOR CSS-->
         <link rel="stylesheet" type="text/css" href="app-assets/vendors/vendors.min.css" />
@@ -23,8 +24,8 @@
         <link rel="stylesheet" type="text/css" href="app-assets/css/pages/dashboard-modern.css" />
         <link rel="stylesheet" type="text/css" href="app-assets/css/pages/intro.min.css" />
 
-    <link rel="stylesheet" type="text/css" href="app-assets/vendors/ionRangeSlider/css/ion.rangeSlider.css">
-    <link rel="stylesheet" type="text/css" href="app-assets/vendors/ionRangeSlider/css/ion.rangeSlider.skinFlat.css">
+        <link rel="stylesheet" type="text/css" href="app-assets/vendors/ionRangeSlider/css/ion.rangeSlider.css">
+        <link rel="stylesheet" type="text/css" href="app-assets/vendors/ionRangeSlider/css/ion.rangeSlider.skinFlat.css">
         <!-- END: Page Level CSS-->
         <!-- BEGIN: Custom CSS-->
         <link rel="stylesheet" type="text/css" href="app-assets/css/custom/custom.css" />
@@ -128,28 +129,16 @@
         <script>
             function copiar(id_elemento) {
 
-                // Crea un campo de texto "oculto"
                 var aux = document.createElement("input");
-
-                // Asigna el contenido del elemento especificado al valor del campo
                 aux.setAttribute("value", document.getElementById(id_elemento).value);
-
-                // Añade el campo a la página
                 document.body.appendChild(aux);
-
-                // Selecciona el contenido del campo
                 aux.select();
-
-                // Copia el texto seleccionado
                 document.execCommand("copy");
-
-                // Elimina el campo de la página
                 document.body.removeChild(aux);
-
                 console.log("texto copiado")
             }
         </script>
-
+<!--
         <script src="app-assets/js/vendors.min.js"></script>
 
         <script src="app-assets/vendors/chartjs/chart.min.js"></script>
@@ -165,7 +154,7 @@
         <script src="app-assets/js/scripts/dashboard-modern.js"></script>
         <script src="app-assets/js/scripts/intro.min.js"></script>
         <script src="app-assets/vendors/ionRangeSlider/js/ion.rangeSlider.js"></script>
-        <script src="app-assets/js/scripts/extra-components-range-slider.min.js"></script>
+        <script src="app-assets/js/scripts/extra-components-range-slider.min.js"></script>-->
 
     </body>
 </html>

@@ -11,7 +11,7 @@ if(true){// testnet comand
     INFINITY = "0xeBbFeAc198B7bA39282fb3975051c32054F294Ae"; // version 2  0xf47fBd34E663D8F5ad78fbf46Ae097202557A8e8
 
     TOKEN = "0xd5881b890b443be0c609BDFAdE3D8cE886cF9BAc";
-    chainId = '0x61';
+    chainId = '0x61';// BTTChain "0xC7"//;
 }
 
 export default {proxy, WS,INFINITY, TOKEN, chainId};

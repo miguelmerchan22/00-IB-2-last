@@ -299,11 +299,12 @@ export default class CrowdFunding extends Component {
         if (get["ref"]) {
           tmp = get["ref"].split("#");
 
-          //console.log(tmp[0]);
-
-          var wallet = await this.props.wallet.contractBinary.methods
+          var wallet = tmp[0];
+          if (!this.props.wallet.web3.utils.isAddress(wallet)) {
+            wallet = await this.props.wallet.contractBinary.methods
             .idToAddress(tmp[0])
             .call({ from: this.state.currentAccount });
+          }
 
           inversors = await this.props.wallet.contractBinary.methods
             .investors(wallet)
