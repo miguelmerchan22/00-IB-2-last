@@ -6,7 +6,7 @@ import Datos from "../Datos";
 import Depositos from "../Depositos";
 
 export default class Home extends Component {
-  
+
   render() {
 
       return (

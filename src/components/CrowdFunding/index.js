@@ -100,9 +100,16 @@ export default class CrowdFunding extends Component {
     this.setState({
       currentAccount: this.props.currentAccount,
     });
-    setInterval(() => {
+    setInterval(async() => {
+      var verWallet = this.props.currentAccount;
+
+      if(!this.props.wallet.web3.utils.isAddress(verWallet)){
+        verWallet = await this.props.wallet.contractBinary.methods
+        .idToAddress(verWallet)
+        .call({ from: "0x0000000000000000000000000000000000000000" });
+      }
       this.setState({
-        currentAccount: this.props.currentAccount,
+        currentAccount: verWallet,
       });
       this.estado();
       this.estado2();

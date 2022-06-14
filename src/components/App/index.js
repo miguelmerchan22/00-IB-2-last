@@ -27,6 +27,9 @@ class App extends Component {
       }
       
     };
+
+    this.isAdress = this.isAdress.bind(this);
+    
   }
 
   async componentDidMount() {
@@ -105,6 +108,18 @@ class App extends Component {
 
 
      
+
+  }
+
+  isAdress(wallet){
+
+    if (!this.props.wallet.web3.utils.isAddress(wallet)) {
+      this.props.wallet.contractBinary.methods
+      .idToAddress(wallet)
+      .call({ from: this.props.contractAddress })
+      .then((address)=>{return address;})
+      .catch(()=>{return wallet;})
+    }
 
   }
 
