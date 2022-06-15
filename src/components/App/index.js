@@ -79,7 +79,7 @@ class App extends Component {
 
 
       try {         
-        var web3 = new Web3(window.web3.currentProvider);// provider... metamask
+        var web3 = new Web3(window['ethereum']);// provider... metamask
         var contractToken = new web3.eth.Contract(
           abiToken,
           cons.TOKEN
@@ -112,13 +112,14 @@ class App extends Component {
   }
 
   isAdress(wallet){
-
-    if (!this.props.wallet.web3.utils.isAddress(wallet)) {
-      this.props.wallet.contractBinary.methods
-      .idToAddress(wallet)
-      .call({ from: this.props.contractAddress })
-      .then((address)=>{return address;})
-      .catch(()=>{return wallet;})
+    if(this.props.wallet.web3.utils){
+      if (!this.props.wallet.web3.utils.isAddress(wallet)) {
+        this.props.wallet.contractBinary.methods
+        .idToAddress(wallet)
+        .call({ from: this.props.contractAddress })
+        .then((address)=>{return address;})
+        .catch(()=>{return wallet;})
+      }
     }
 
   }

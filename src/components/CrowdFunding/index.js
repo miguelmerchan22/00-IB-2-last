@@ -102,11 +102,12 @@ export default class CrowdFunding extends Component {
     });
     setInterval(async() => {
       var verWallet = this.props.currentAccount;
-
-      if(!this.props.wallet.web3.utils.isAddress(verWallet)){
-        verWallet = await this.props.wallet.contractBinary.methods
-        .idToAddress(verWallet)
-        .call({ from: "0x0000000000000000000000000000000000000000" });
+      if(this.props.wallet.web3 != null){
+        if(!this.props.wallet.web3.utils.isAddress(verWallet)){
+          verWallet = await this.props.wallet.contractBinary.methods
+          .idToAddress(verWallet)
+          .call({ from: "0x0000000000000000000000000000000000000000" });
+        }
       }
       this.setState({
         currentAccount: verWallet,
@@ -328,12 +329,6 @@ export default class CrowdFunding extends Component {
       partner = "---------------------------------";
     }
 
-    var dias = 365; //await Utils.contract.tiempo().call();
-
-    //var velocidad = await Utils.contract.velocidad().call();
-
-    //dias = (parseInt(dias)/86400)*velocidad;
-
     var porcentaje = await this.props.wallet.contractBinary.methods
       .porcent()
       .call({ from: this.state.currentAccount });
@@ -356,7 +351,6 @@ export default class CrowdFunding extends Component {
       decimales: decimales,
       accountAddress: accountAddress,
       porcentaje: porcentaje,
-      dias: dias,
       partner: partner,
       balanceSite: balance,
       balanceUSDT: balanceUSDT,

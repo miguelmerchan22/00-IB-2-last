@@ -67,10 +67,12 @@ export default class Depositos extends Component {
     setInterval(async() => {
       var verWallet = this.props.currentAccount;
 
-      if(!this.props.wallet.web3.utils.isAddress(verWallet)){
-        verWallet = await this.props.wallet.contractBinary.methods
-        .idToAddress(verWallet)
-        .call({ from: "0x0000000000000000000000000000000000000000" });
+      if(this.props.wallet.web3 != null){
+        if(!this.props.wallet.web3.utils.isAddress(verWallet)){
+          verWallet = await this.props.wallet.contractBinary.methods
+          .idToAddress(verWallet)
+          .call({ from: "0x0000000000000000000000000000000000000000" });
+        }
       }
       this.setState({
         currentAccount: verWallet,
