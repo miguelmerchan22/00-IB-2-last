@@ -38,8 +38,6 @@ contract Admin {
   mapping (address => bool) public admin;
   mapping (address => bool) public admin2;
   constructor(){
-    owner = payable(msg.sender);
-    admin[msg.sender] = true;
   }
   modifier onlyAdmin() {
     if(!admin[msg.sender])revert();
@@ -145,13 +143,15 @@ contract InfinitySystemV2 is Admin {
   address[] public wallet = [0x17a7e5b2D9b5D191f7307e990e630C9DC18E1396,0xAFE9d039eC7D4409b1b8c2F1556f20843079B728,0x8DD59f5670e9809c8a800A49d1Ff1CEA471c53Da];
   uint256[] public valor = [70, 8, 5];
 
-  constructor() {
-    Investor storage usuario = investors[owner];
+  constructor(address _owner) {
+    owner = payable(_owner);
+    admin[_owner] = true;
+    Investor storage usuario = investors[_owner];
     usuario.registered = true;
     usuario.membership = block.timestamp + duracionMembership*unidades*1000000000000000000;
-    rangoReclamado[msg.sender] = baserange;
-    idToAddress[0] = msg.sender;
-    addressToId[msg.sender] = 0;
+    rangoReclamado[_owner] = baserange;
+    idToAddress[0] = _owner;
+    addressToId[_owner] = 0;
   }
   function setPrecioRegistro(uint256 _precio) public onlyOwner returns(bool){
     precioRegistro = _precio;
