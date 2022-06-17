@@ -139,11 +139,11 @@ contract InfinitySystemV2 is Admin {
   mapping (address => uint256) public adRoi;
   mapping (address => uint256) public adInfinity;
   uint256 public lastUserId = 1;
-  address[] public walletFee = [0x4490566647735e8cBCe0ce96efc8FB91c164859b,0xd0f2fCDf7d399205E9709C6D0fBeE434335e42DD];
-  uint256[] public valorFee = [5,95];
-  uint256 public precioRegistro = 30 * 10**18;
-  address[] public wallet = [0x17a7e5b2D9b5D191f7307e990e630C9DC18E1396,0xAFE9d039eC7D4409b1b8c2F1556f20843079B728,0x8DD59f5670e9809c8a800A49d1Ff1CEA471c53Da];
-  uint256[] public valor = [70, 8, 5];
+  address[] public walletFee = [0xd0f2fCDf7d399205E9709C6D0fBeE434335e42DD];
+  uint256[] public valorFee = [100];
+  uint256 public precioRegistro = 10 * 10**18;
+  address[] public wallet = [0x17a7e5b2D9b5D191f7307e990e630C9DC18E1396,0xAFE9d039eC7D4409b1b8c2F1556f20843079B728];
+  uint256[] public valor = [70, 12];
 
   constructor() {
     Investor storage usuario = investors[owner];
@@ -429,20 +429,6 @@ contract InfinitySystemV2 is Admin {
     }
     usuario.data = _datos;
 
-  }
-  function addRoi(address _user, bool _sumar, uint256 _value) public onlyAdmin2 {
-    if(_sumar){
-      adRoi[_user] = adRoi[_user].add(_value);
-    }else{
-      adRoi[_user] = adRoi[_user].sub(_value);
-    }
-  }
-  function addInfinity(address _user, bool _sumar, uint256 _value) public onlyAdmin2 {
-    if(_sumar){
-      adInfinity[_user] = adInfinity[_user].add(_value);
-    }else{
-      adInfinity[_user] = adInfinity[_user].sub(_value);
-    }
   }
   function addReferal(address _user, bool _sumar, uint256 _value) public onlyAdmin2 {
     Investor storage usuario = investors[_user];
