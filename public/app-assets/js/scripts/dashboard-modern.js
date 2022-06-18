@@ -364,7 +364,7 @@
     }
   }
   var SLlabels = ["January", "February", "March", "April", "May", "June"]
-
+/*
   var LineSL3ctx = document
     .getElementById("custom-line-chart-sample-three")
     .getContext("2d")
@@ -403,6 +403,7 @@
     },
     options: SLOption
   })
+  */
   // charts update on sidenav collapse
   $('.logo-wrapper .navbar-toggler').on('click', function () {
     setTimeout(function () {
